@@ -41,7 +41,7 @@ public struct DemoAuthClient: AuthClient {
     public init() {}
 
     public func login(_ credentials: LoginCredentials) async throws -> LoginSession {
-        try await Task.sleep(for: .milliseconds(450))
+        try await Task.sleep(nanoseconds: 450_000_000)
         guard credentials.email == "demo@example.com", credentials.password == "123456" else {
             throw AuthError.invalidCredentials
         }
