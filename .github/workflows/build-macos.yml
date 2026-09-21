@@ -38,7 +38,11 @@ jobs:
         run: xcodebuild archive -scheme DylibLoginKit -destination 'generic/platform=iOS Simulator' -archivePath "$RUNNER_TEMP/simulator" SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 
       - name: Create xcframework
-        run: xcodebuild -create-xcframework -framework "$RUNNER_TEMP/device.xcarchive/Products/Library/Frameworks/DylibLoginKit.framework" -framework "$RUNNER_TEMP/simulator.xcarchive/Products/Library/Frameworks/DylibLoginKit.framework" -output DylibLoginKit.xcframework
+        run: |
+          DEVICE_FRAMEWORK=$(find "$RUNNER_TEMP/device.xcarchive" -type d -name 'DylibLoginKit.framework' -print -quit)
+          SIMULATOR_FRAMEWORK=$(find "$RUNNER_TEMP/simulator.xcarchive" -type d -name 'DylibLoginKit.framework' -print -quit)
+          test -n "$DEVICE_FRAMEWORK" && test -n "$SIMULATOR_FRAMEWORK"
+          xcodebuild -create-xcframework -framework "$DEVICE_FRAMEWORK" -framework "$SIMULATOR_FRAMEWORK" -output DylibLoginKit.xcframework
 
       - name: Zip xcframework
         run: zip -qr DylibLoginKit.xcframework.zip DylibLoginKit.xcframework
