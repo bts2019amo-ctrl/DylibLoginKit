@@ -26,10 +26,10 @@ jobs:
         run: swift package resolve
 
       - name: Build package
-        run: swift build -v
+        run: xcodebuild -scheme DylibLoginKit -destination 'generic/platform=iOS' build
 
       - name: Run tests
-        run: swift test -v
+        run: xcodebuild -scheme DylibLoginKit -destination 'platform=iOS Simulator,name=iPhone 17' test
 
       - name: Archive source package
         run: zip -qr DylibLoginKit-source.zip Package.swift Sources Tests README.md
