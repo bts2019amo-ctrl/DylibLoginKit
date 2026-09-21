@@ -5,7 +5,7 @@ let package = Package(
     name: "DylibLoginKit",
     platforms: [.iOS(.v15)],
     products: [
-        .library(name: "DylibLoginKit", targets: ["DylibLoginKit"])
+        .library(name: "DylibLoginKit", type: .dynamic, targets: ["DylibLoginKit"])
     ],
     targets: [
         .target(name: "DylibLoginKit"),
