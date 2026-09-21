@@ -31,11 +31,25 @@ jobs:
       - name: Run tests
         run: xcodebuild -scheme DylibLoginKit -destination 'platform=iOS Simulator,name=iPhone 17' test
 
+      - name: Archive device framework
+        run: xcodebuild archive -scheme DylibLoginKit -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/device" SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+
+      - name: Archive simulator framework
+        run: xcodebuild archive -scheme DylibLoginKit -destination 'generic/platform=iOS Simulator' -archivePath "$RUNNER_TEMP/simulator" SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+
+      - name: Create xcframework
+        run: xcodebuild -create-xcframework -framework "$RUNNER_TEMP/device.xcarchive/Products/Library/Frameworks/DylibLoginKit.framework" -framework "$RUNNER_TEMP/simulator.xcarchive/Products/Library/Frameworks/DylibLoginKit.framework" -output DylibLoginKit.xcframework
+
+      - name: Zip xcframework
+        run: zip -qr DylibLoginKit.xcframework.zip DylibLoginKit.xcframework
+
       - name: Archive source package
         run: zip -qr DylibLoginKit-source.zip Package.swift Sources Tests README.md
 
-      - name: Upload build artifact
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DylibLoginKit-source
-          path: DylibLoginKit-source.zip
+          name: DylibLoginKit-build
+          path: |
+            DylibLoginKit.xcframework.zip
+            DylibLoginKit-source.zip
